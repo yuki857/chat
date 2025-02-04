@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>チャット</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin: 0; }
+        .chat-box { width: 90%; max-width: 600px; height: 400px; overflow-y: auto; border: 1px solid #ddd; margin: 20px auto; padding: 10px; }
+        .message { padding: 8px; margin: 5px; border-radius: 5px; max-width: 80%; word-wrap: break-word; }
+        .sent { background-color: #007bff; color: white; align-self: flex-end; }
+        .received { background-color: #f1f1f1; align-self: flex-start; }
+        .input-box { position: fixed; bottom: 0; width: 100%; background: white; padding: 10px; }
+        input { width: 80%; padding: 10px; }
+        button { padding: 10px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1 id="chatTitle">チャット</h1>
+    <div class="chat-box" id="chatBox"></div>
+    <div class="input-box">
+        <input type="text" id="messageInput" placeholder="メッセージを入力">
+        <button onclick="sendMessage()">送信</button>
+    </div>
+
+    <audio id="notificationSound" src="notification.mp3"></audio>
+
+    <script>
+        const chatBox = document.getElementById("chatBox");
+        const messageInput = document.getElementById("messageInput");
+        const notificationSound = document.getElementById("notificationSound");
+        const params = new URLSearchParams(window.location.search);
+        const friendName = params.get("friend");
+
+        if (friendName) {
+            document.getElementById("chatTitle").innerText = friendName + " とチャット";
+        }
+
+        function loadMessages() {
+            const chatHistory = JSON.parse(localStorage.getItem("chat_" + friendName)) || [];
+            chatBox.innerHTML = "";
+            chatHistory.forEach(msg => {
+                const messageDiv = document.createElement("div");
+                messageDiv.classList.add("message", msg.type);
+                messageDiv.innerText = msg.text;
+                chatBox.appendChild(messageDiv);
+            });
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        function sendMessage() {
+            const text = messageInput.value.trim();
+            if (!text) return;
+
+            const message = { text: text, type: "sent" };
+            saveMessage(message);
+            displayMessage(message);
+            messageInput.value = "";
+        }
+
+        function receiveMessage(text) {
+            const message = { text: text, type: "received" };
+            saveMessage(message);
+            displayMessage(message);
+            notificationSound.play();
+        }
+
+        function saveMessage(message) {
+            const chatHistory = JSON.parse(localStorage.getItem("chat_" + friendName)) || [];
+            chatHistory.push(message);
+            localStorage.setItem("chat_" + friendName, JSON.stringify(chatHistory));
+        }
+
+        function displayMessage(message) {
+            const messageDiv = document.createElement("div");
+            messageDiv.classList.add("message", message.type);
+            messageDiv.innerText = message.text;
+            chatBox.appendChild(messageDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        loadMessages();
+    </script>
+</body>
+</html>
