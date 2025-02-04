@@ -6,30 +6,46 @@
     <title>プロフィール作成</title>
     <style>
         body { text-align: center; font-family: Arial, sans-serif; margin-top: 50px; }
-        input { padding: 10px; font-size: 16px; }
+        input { padding: 10px; font-size: 16px; margin: 5px; }
         button { padding: 10px; font-size: 16px; cursor: pointer; }
     </style>
 </head>
 <body>
-    <h1>プロフィールを作成してください</h1>
+    <h1>プロフィール作成</h1>
     <form id="profileForm">
-        <input type="text" id="username" placeholder="名前" required />
-        <input type="text" id="friendCode" placeholder="友達追加コード" required />
+        <input type="text" id="username" placeholder="名前" required /><br>
+        <input type="text" id="friendCode" placeholder="友達追加コード (例: 12345)" required /><br>
         <button type="button" onclick="saveProfile()">保存</button>
     </form>
 
     <script>
         function saveProfile() {
-            const username = document.getElementById('username').value;
-            const friendCode = document.getElementById('friendCode').value;
+            const username = document.getElementById('username').value.trim();
+            const friendCode = document.getElementById('friendCode').value.trim();
 
-            if (username && friendCode) {
-                localStorage.setItem('username', username);
-                localStorage.setItem('friendCode', friendCode);
-                window.location.href = 'main.html';  // プロフィール作成後にメインページへ
-            } else {
-                alert('すべてのフィールドを入力してください');
+            if (!username || !friendCode) {
+                alert("すべてのフィールドを入力してください");
+                return;
             }
+
+            // ユーザー情報をオブジェクトとして保存
+            const userProfile = { name: username, code: friendCode };
+
+            // 既存のデータを取得（ない場合は空の配列）
+            const users = JSON.parse(localStorage.getItem("users")) || [];
+
+            // 既に同じコードが登録されているかチェック
+            if (users.some(user => user.code === friendCode)) {
+                alert("この友達追加コードはすでに使われています。");
+                return;
+            }
+
+            // 配列に追加して保存
+            users.push(userProfile);
+            localStorage.setItem("users", JSON.stringify(users));
+
+            alert("プロフィールが保存されました！");
+            window.location.href = "main.html"; // メインページへ移動
         }
     </script>
 </body>
