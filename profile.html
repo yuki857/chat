@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>プロフィール作成</title>
+    <style>
+        body { text-align: center; font-family: Arial, sans-serif; margin-top: 50px; }
+        input { padding: 10px; font-size: 16px; }
+        button { padding: 10px; font-size: 16px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>プロフィールを作成してください</h1>
+    <form id="profileForm">
+        <input type="text" id="username" placeholder="名前" required />
+        <input type="text" id="friendCode" placeholder="友達追加コード" required />
+        <button type="button" onclick="saveProfile()">保存</button>
+    </form>
+
+    <script>
+        function saveProfile() {
+            const username = document.getElementById('username').value;
+            const friendCode = document.getElementById('friendCode').value;
+
+            if (username && friendCode) {
+                localStorage.setItem('username', username);
+                localStorage.setItem('friendCode', friendCode);
+                window.location.href = 'main.html';  // プロフィール作成後にメインページへ
+            } else {
+                alert('すべてのフィールドを入力してください');
+            }
+        }
+    </script>
+</body>
+</html>
