@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>メインページ</title>
     <style>
-        body { font-family: Arial, sans-serif; }
+        body { font-family: Arial, sans-serif; text-align: center; }
         .navbar { display: flex; justify-content: space-around; background-color: #007bff; padding: 10px; color: white; }
         .navbar a { color: white; text-decoration: none; }
         .friend { margin: 10px; padding: 10px; border: 1px solid #ddd; cursor: pointer; }
@@ -25,21 +25,62 @@
     </div>
 
     <h2>友達追加</h2>
-    <input type="text" id="friendCodeInput" placeholder="友達コード" />
+    <input type="text" id="friendCodeInput" placeholder="友達追加コード" />
     <button onclick="addFriend()">友達追加</button>
 
     <script>
-        function addFriend() {
-            const friendCodeInput = document.getElementById('friendCodeInput').value;
-            const friendName = prompt('友達の名前を入力してください');  // 実際には友達情報を管理する方法を考えます
+        document.addEventListener("DOMContentLoaded", function () {
+            loadFriends(); // ページ読み込み時に友達一覧を表示
+        });
 
-            if (friendCodeInput && friendName) {
-                const friendList = document.getElementById('friendList');
-                const friendDiv = document.createElement('div');
-                friendDiv.classList.add('friend');
-                friendDiv.innerText = friendName;
-                friendList.appendChild(friendDiv);
+        function addFriend() {
+            const friendCodeInput = document.getElementById("friendCodeInput").value.trim();
+            if (!friendCodeInput) {
+                alert("友達追加コードを入力してください");
+                return;
             }
+
+            const users = JSON.parse(localStorage.getItem("users")) || [];
+            const friend = users.find(user => user.code === friendCodeInput);
+
+            if (!friend) {
+                alert("このコードのユーザーが見つかりません");
+                return;
+            }
+
+            // 友達リストを取得（ない場合は空の配列）
+            const friendList = JSON.parse(localStorage.getItem("friendList")) || [];
+
+            // 既に追加済みかチェック
+            if (friendList.some(f => f.code === friend.code)) {
+                alert("この友達はすでに追加されています");
+                return;
+            }
+
+            // 友達リストに追加
+            friendList.push(friend);
+            localStorage.setItem("friendList", JSON.stringify(friendList));
+
+            alert(friend.name + " を友達に追加しました！");
+            loadFriends(); // 友達一覧を再表示
+        }
+
+        function loadFriends() {
+            const friendList = JSON.parse(localStorage.getItem("friendList")) || [];
+            const friendListDiv = document.getElementById("friendList");
+            friendListDiv.innerHTML = ""; // 一度リストをクリア
+
+            friendList.forEach(friend => {
+                const friendDiv = document.createElement("div");
+                friendDiv.classList.add("friend");
+                friendDiv.innerText = friend.name;
+                friendDiv.onclick = () => openChat(friend.name);
+                friendListDiv.appendChild(friendDiv);
+            });
+        }
+
+        function openChat(friendName) {
+            alert(friendName + " とチャットを開始します！（ここにチャット機能を追加予定）");
         }
     </script>
 </body>
