@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>メインページ</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        .navbar { display: flex; justify-content: space-around; background-color: #007bff; padding: 10px; color: white; }
+        .navbar a { color: white; text-decoration: none; }
+        .friend { margin: 10px; padding: 10px; border: 1px solid #ddd; cursor: pointer; }
+        .friend:hover { background-color: #f0f0f0; }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <a href="#chat">トーク</a>
+        <a href="#friends">友達一覧</a>
+        <a href="#profile">自分のプロフィール</a>
+    </div>
+
+    <h2>友達一覧</h2>
+    <div id="friendList">
+        <!-- ここに友達を表示 -->
+    </div>
+
+    <h2>友達追加</h2>
+    <input type="text" id="friendCodeInput" placeholder="友達コード" />
+    <button onclick="addFriend()">友達追加</button>
+
+    <script>
+        function addFriend() {
+            const friendCodeInput = document.getElementById('friendCodeInput').value;
+            const friendName = prompt('友達の名前を入力してください');  // 実際には友達情報を管理する方法を考えます
+
+            if (friendCodeInput && friendName) {
+                const friendList = document.getElementById('friendList');
+                const friendDiv = document.createElement('div');
+                friendDiv.classList.add('friend');
+                friendDiv.innerText = friendName;
+                friendList.appendChild(friendDiv);
+            }
+        }
+    </script>
+</body>
+</html>
